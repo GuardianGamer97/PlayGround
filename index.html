@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#081327" />
+  <meta name="description" content="Sly Runs: a rooftop endless heist runner. Leap, slide and swipe your way across Paris." />
+  <title>Sly Runs — Rooftop Heist</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1830'/%3E%3Cpath d='M12 25 22 15l7 8h6l7-8 10 10-4 23H16z' fill='%23f7bd49'/%3E%3Cpath d='M19 31c0-6 5-10 13-10s13 4 13 10-6 11-13 11-13-5-13-11z' fill='%23121d34'/%3E%3Cpath d='M24 31h6m4 0h6' stroke='%23f7bd49' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="scene" aria-label="3D rooftop runner game"></canvas>
+
+  <div class="screen-fx" aria-hidden="true">
+    <div class="grain"></div>
+    <div class="speed-fx"></div>
+    <div class="vignette"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+  </div>
+
+  <div id="menu" class="menu">
+    <div class="menu-shade" aria-hidden="true"></div>
+
+    <header class="menu-top">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 46 46" aria-hidden="true">
+          <path d="M5 21 14 9l7 7h4l7-7 9 12-3 17H8Z" fill="currentColor"/>
+          <path d="M11 27c0-6 5-10 12-10s12 4 12 10-5 10-12 10-12-4-12-10Z" fill="#0a1428"/>
+          <path d="M16 27h5m4 0h5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>COOPER GANG<br><b>PRESENTS</b></span>
+      </div>
+      <div class="case-file">CASE FILE <b>#1972</b><span>PARIS · 03:17 AM</span></div>
+    </header>
+
+    <main class="menu-copy">
+      <div class="kicker"><i></i> A ROOFTOP ENDLESS RUNNER <i></i></div>
+      <h1 class="logo" aria-label="Sly Runs">
+        <span class="logo-sly">SLY</span>
+        <span class="logo-runs">RUNS</span>
+      </h1>
+      <div class="subtitle"><span>ROOFTOP</span><b>HEIST</b></div>
+      <p class="tagline">Outrun the law. Pocket the loot.<br><em>Whatever you do, don't look down.</em></p>
+
+      <div class="menu-actions">
+        <button id="startBtn" class="start-btn" aria-label="Start" type="button">
+          <span class="start-icon" aria-hidden="true"></span>
+          <span class="start-label"><small>THE HEIST IS ON</small><b>START RUN</b></span>
+          <span class="start-arrow" aria-hidden="true">→</span>
+        </button>
+        <div class="best-card">
+          <span>PERSONAL BEST</span>
+          <b id="menuBest">000,000</b>
+        </div>
+      </div>
+
+      <div class="control-hints" aria-label="Controls">
+        <div><span class="key">←</span><span class="key">→</span><small>SWITCH LANE</small></div>
+        <div><span class="key wide">SPACE</span><small>JUMP</small></div>
+        <div><span class="key wide">↓</span><small>SLIDE</small></div>
+        <div class="swipe-hint"><span class="swipe-ico">↔</span><small>OR SWIPE</small></div>
+      </div>
+    </main>
+
+    <aside class="wanted-card" aria-hidden="true">
+      <span class="wanted-label">WANTED</span>
+      <div class="wanted-face">
+        <svg viewBox="0 0 120 120">
+          <path d="M20 49 38 22l13 15h18l13-15 18 27-7 41H27Z" fill="#e9dcc0"/>
+          <path d="M28 61c0-15 14-26 32-26s32 11 32 26-14 28-32 28-32-13-32-28Z" fill="#2a2a25"/>
+          <path d="M34 60c0-12 11-21 26-21s26 9 26 21-11 22-26 22-26-10-26-22Z" fill="#171718"/>
+          <path d="M43 58h12m10 0h12" stroke="#e9dcc0" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="49" cy="59" r="3" fill="#f5b643"/>
+          <circle cx="71" cy="59" r="3" fill="#f5b643"/>
+          <path d="M49 76c7 5 15 5 22 0" fill="none" stroke="#d9ccb2" stroke-width="3" stroke-linecap="round"/>
+          <path d="M47 19h26l-4 9H51Z" fill="#1c4778"/>
+        </svg>
+      </div>
+      <div class="wanted-name">SLY</div>
+      <div class="wanted-meta">MASTER THIEF<br><b>REWARD 10,000,000</b></div>
+      <span class="stamp">AT LARGE</span>
+    </aside>
+
+    <footer class="menu-foot">
+      <div class="tip"><span>!</span> Collect coins to boost your score. Three masks, three chances.</div>
+      <div class="credit">A SLY COOPER–STYLE FAN TRIBUTE · NO ACTUAL RACCOONS HARMED</div>
+    </footer>
+  </div>
+
+  <div id="hud" class="hud" aria-live="polite">
+    <div class="hud-top">
+      <div class="hud-block score-block">
+        <span class="hud-label">SCORE</span>
+        <div class="score-row"><b id="score">000000</b><i id="multiplier">x1</i></div>
+        <div class="distance-row"><span id="distance">0</span> M ON THE ROOFTOPS</div>
+      </div>
+
+      <div class="heat-wrap">
+        <div class="heat-label"><span>POLICE HEAT</span><b id="heatLabel">LOW</b></div>
+        <div class="heat-bar"><i id="heatFill"></i><span class="heat-stars">★ ★ ★ ★ ★</span></div>
+      </div>
+
+      <div class="hud-right">
+        <div class="lives" id="lives" aria-label="Three lives">
+          <span class="mask-life"></span><span class="mask-life"></span><span class="mask-life"></span>
+        </div>
+        <div class="coin-pill">
+          <span class="coin-ico"></span>
+          <b id="coins">0</b>
+        </div>
+        <button id="muteBtn" class="icon-btn" aria-label="Toggle sound" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z" fill="currentColor"/><path class="sound-wave" d="M16.5 5.2a8 8 0 0 1 0 13.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button id="pauseBtn" class="icon-btn" aria-label="Pause game" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="power-rail" id="powerRail">
+      <div class="power" data-power="magnet"><span class="p-ico">⌁</span><div><small>MAGNET</small><i><b></b></i></div></div>
+      <div class="power" data-power="shield"><span class="p-ico">◆</span><div><small>SHIELD</small><i><b></b></i></div></div>
+      <div class="power" data-power="boost"><span class="p-ico">ϟ</span><div><small>TURBO</small><i><b></b></i></div></div>
+    </div>
+
+    <div class="combo-toast" id="comboToast"></div>
+    <div class="callout" id="callout"></div>
+    <div class="hint-strip" id="hintStrip">
+      <span>← → SWITCH</span><span>SPACE JUMP</span><span>↓ SLIDE</span>
+    </div>
+
+    <div class="touch-ui">
+      <div class="touch-pad">
+        <button type="button" data-action="left" aria-label="Move left">←</button>
+        <button type="button" data-action="jump" aria-label="Jump">↑</button>
+        <button type="button" data-action="slide" aria-label="Slide">↓</button>
+        <button type="button" data-action="right" aria-label="Move right">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pauseScreen" class="modal-screen" hidden>
+    <div class="modal-card pause-card">
+      <span class="modal-kicker">HEIST ON HOLD</span>
+      <h2>TAKE FIVE</h2>
+      <p>The law can wait. Your loot can't.</p>
+      <div class="modal-stats"><div><small>SCORE</small><b id="pauseScore">0</b></div><div><small>DISTANCE</small><b id="pauseDistance">0 m</b></div><div><small>COINS</small><b id="pauseCoins">0</b></div></div>
+      <button id="resumeBtn" class="modal-btn" type="button" aria-label="Resume">RESUME RUN</button>
+      <button id="quitBtn" class="text-btn" type="button">ABANDON HEIST</button>
+    </div>
+  </div>
+
+  <div id="gameOver" class="modal-screen" hidden>
+    <div class="modal-card over-card">
+      <span class="stamp-big">BUSTED</span>
+      <span class="modal-kicker">THE LONG ARM OF THE LAW</span>
+      <h2>HEIST OVER</h2>
+      <div class="over-score"><small>FINAL SCORE</small><b id="finalScore">0</b><span id="newBest" hidden>NEW PERSONAL BEST!</span></div>
+      <div class="modal-stats">
+        <div><small>DISTANCE</small><b id="finalDistance">0 m</b></div>
+        <div><small>COINS</small><b id="finalCoins">0</b></div>
+        <div><small>BEST COMBO</small><b id="finalCombo">x1</b></div>
+      </div>
+      <button id="restartBtn" class="modal-btn" type="button" aria-label="Play again">RUN IT BACK</button>
+      <button id="menuBtn" class="text-btn" type="button">BACK TO THE SAFEHOUSE</button>
+    </div>
+  </div>
+
+  <div id="loader" class="loader">
+    <div class="loader-mark">
+      <svg viewBox="0 0 46 46" aria-hidden="true"><path d="M5 21 14 9l7 7h4l7-7 9 12-3 17H8Z" fill="currentColor"/><path d="M11 27c0-6 5-10 12-10s12 4 12 10-5 10-12 10-12-4-12-10Z" fill="#0a1428"/><path d="M16 27h5m4 0h5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    </div>
+    <span>CASING THE JOINT…</span>
+  </div>
+
+  <script type="module" src="js/game.js"></script>
+</body>
+</html>
